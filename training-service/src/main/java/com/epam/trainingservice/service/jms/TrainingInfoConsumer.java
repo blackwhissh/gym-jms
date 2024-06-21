@@ -23,7 +23,7 @@ public class TrainingInfoConsumer {
     }
 
     @JmsListener(destination = "${spring.activemq.destination}")
-    public void receive(Message message) throws JsonProcessingException {
+    public void receive(Message<TrainingInfoMessage> message) throws JsonProcessingException {
         TrainingInfoMessage request = objectMapper.readValue(message.getPayload().toString(), TrainingInfoMessage.class);
         log.info("Received message: " + request.toString());
         trainingService.saveInfo(request);

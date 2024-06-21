@@ -9,18 +9,20 @@ import com.epam.hibernate.dto.trainer.TrainerListInfo;
 import com.epam.hibernate.entity.*;
 import com.epam.hibernate.repository.TraineeRepository;
 import com.epam.hibernate.repository.TrainerRepository;
+import com.epam.hibernate.repository.UserJpaRepository;
 import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import javax.naming.AuthenticationException;
 import java.sql.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -34,12 +36,14 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 class TraineeServiceTest {
-    @Mock
-    private MeterRegistry meterRegistry;
+    @Spy
+    private MeterRegistry meterRegistry = new SimpleMeterRegistry();
     @Mock
     private TraineeRepository traineeRepository;
     @Mock
     private TrainerRepository trainerRepository;
+    @Mock
+    private UserJpaRepository userJpaRepository;
     @InjectMocks
     private TraineeService traineeService;
 
@@ -48,8 +52,7 @@ class TraineeServiceTest {
     void createTraineeProfileOk() {
         when(traineeRepository.save(any(Trainee.class))).thenReturn(new Trainee());
 
-        TraineeRegisterRequest validRequest = new TraineeRegisterRequest("John", "Doe",
-                Date.valueOf("2001-10-10"), "123 Main St");
+        TraineeRegisterRequest validRequest = new TraineeRegisterRequest("John", "Doe", Date.valueOf("2001-10-10"), "123 Main St");
 
         ResponseEntity<TraineeRegisterResponse> responseEntity = traineeService.createProfile(validRequest);
 
@@ -65,8 +68,7 @@ class TraineeServiceTest {
     void createTraineeProfileSameNameOk() {
         when(traineeRepository.save(any(Trainee.class))).thenReturn(new Trainee());
 
-        TraineeRegisterRequest validRequest = new TraineeRegisterRequest("John", "Doe",
-                Date.valueOf("2001-10-10"), "123 Main St");
+        TraineeRegisterRequest validRequest = new TraineeRegisterRequest("John", "Doe", Date.valueOf("2001-10-10"), "123 Main St");
 
         ResponseEntity<TraineeRegisterResponse> responseEntity = traineeService.createProfile(validRequest);
 
@@ -86,47 +88,38 @@ class TraineeServiceTest {
     }
 
     @Test
-    void selectTraineeProfileOk() throws AuthenticationException {
+    void selectTraineeProfileOk() {
         Trainee mockTrainee = createMockTrainee();
         when(traineeRepository.selectByUsername(any(String.class))).thenReturn(mockTrainee);
 
-        ResponseEntity<TraineeProfileResponse> response = traineeService.selectTraineeProfile(
-                "John.Doe"
-        );
+        ResponseEntity<TraineeProfileResponse> response = traineeService.selectTraineeProfile("John.Doe");
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     @Test
-    void updateTraineeProfileOk() throws AuthenticationException {
+    void updateTraineeProfileOk() {
         Trainee mockTrainee = createMockTrainee();
-        when(traineeRepository.updateTrainee(any(String.class), any(), any(), any(), any(), any()))
-                .thenReturn(mockTrainee);
+        when(traineeRepository.updateTrainee(any(String.class), any(), any(), any(), any(), any())).thenReturn(mockTrainee);
 
-        ResponseEntity<UpdateTraineeResponse> responseEntity = traineeService.updateTrainee(
-                "John.Doe", new UpdateTraineeRequest("James", "Smith",
-                        null, null, true
-                ));
+        ResponseEntity<UpdateTraineeResponse> responseEntity = traineeService.updateTrainee("John.Doe", new UpdateTraineeRequest("James", "Smith", null, null, true));
 
         assertEquals(200, responseEntity.getStatusCode().value());
     }
 
     @Test
-    void getTrainingListOk() throws AuthenticationException {
+    void getTrainingListOk() {
         List<Training> mockTrainingList = createMockTrainingList();
-        when(traineeRepository.getTrainingList(anyString(), any(), any(), any(), any()))
-                .thenReturn(mockTrainingList);
+        when(traineeRepository.getTrainingList(anyString(), any(), any(), any(), any())).thenReturn(mockTrainingList);
 
-        TraineeTrainingsRequest request = new TraineeTrainingsRequest(
-                null, null, null, null
-        );
+        TraineeTrainingsRequest request = new TraineeTrainingsRequest(null, null, null, null);
         ResponseEntity<List<TraineeTrainingsResponse>> responseEntity = traineeService.getTrainingList("John.Doe", request);
 
         assertEquals(200, responseEntity.getStatusCode().value());
     }
 
     @Test
-    void notAssignedTrainersListOk() throws AuthenticationException {
+    void notAssignedTrainersListOk() {
         Trainee mockTrainee = createMockTrainee();
         when(traineeRepository.selectByUsername(any(String.class))).thenReturn(mockTrainee);
 
@@ -139,7 +132,7 @@ class TraineeServiceTest {
     }
 
     @Test
-    void updateTrainersListOk() throws AuthenticationException {
+    void updateTrainersListOk() {
         Trainee mockTrainee = createMockTrainee();
         when(traineeRepository.selectByUsername(any(String.class))).thenReturn(mockTrainee);
 
@@ -150,9 +143,7 @@ class TraineeServiceTest {
 
         Set<String> trainersSet = new HashSet<>();
         trainersSet.add("trainerUsername");
-        UpdateTrainersListRequest request = new UpdateTrainersListRequest(
-                trainersSet
-        );
+        UpdateTrainersListRequest request = new UpdateTrainersListRequest(trainersSet);
 
         request.setTrainers(trainersSet);
 
