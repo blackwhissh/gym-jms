@@ -3,9 +3,10 @@ package com.epam.trainingservice.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class TrainingInfoMessage {
+public class TrainingInfoMessage implements Serializable {
     private String username;
     private String firstName;
     private String lastName;
