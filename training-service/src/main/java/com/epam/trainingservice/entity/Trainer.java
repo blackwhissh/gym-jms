@@ -1,9 +1,6 @@
 package com.epam.trainingservice.entity;
 
-import com.epam.trainingservice.entity.enums.ActionType;
 import jakarta.persistence.*;
-
-import java.time.LocalDate;
 
 @Entity
 public class Trainer {

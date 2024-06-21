@@ -1,6 +1,6 @@
 package com.epam.trainingservice.service;
 
-import com.epam.trainingservice.dto.TrainingInfoRequest;
+import com.epam.trainingservice.dto.TrainingInfoMessage;
 import com.epam.trainingservice.entity.Trainer;
 import com.epam.trainingservice.entity.Workload;
 import com.epam.trainingservice.entity.enums.ActionType;
@@ -25,7 +25,7 @@ public class TrainingService {
         this.workloadRepository = workloadRepository;
     }
 
-    public ResponseEntity<HttpStatus> saveInfo(TrainingInfoRequest request) {
+    public ResponseEntity<HttpStatus> saveInfo(TrainingInfoMessage request) {
         try {
             if (Arrays.stream(ActionType.values()).noneMatch(actionType ->
                     request.getActionType().toUpperCase().equals(actionType.getValue()))) {
@@ -43,9 +43,9 @@ public class TrainingService {
                 trainerRepository.save(trainer.get());
 
             } else {
-                if (request.getActionType().equals("ADD")){
+                if (ActionType.ADD.getValue().equals(request.getActionType())) {
                     trainer.get().setTotalHours(trainer.get().getTotalHours() + request.getDuration());
-                }else{
+                } else {
                     trainer.get().setTotalHours(trainer.get().getTotalHours() - request.getDuration());
                 }
 

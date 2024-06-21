@@ -30,12 +30,8 @@ public class WorkloadController {
     @GetMapping("/by-month/{username}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @LogEntryExit(showArgs = true, showResult = true)
-    @Operation(summary = "Get Trainer Summary By Year and Month", description = "This method generates Trainer's" +
-            " monthly summary by month and year")
-    public ResponseEntity<TrainerSummaryByMonth> getTrainerSummaryByMonthAndYear(
-            @PathVariable String username,
-            @RequestParam("year") int year,
-            @RequestParam("month") int month) {
+    @Operation(summary = "Get Trainer Summary By Year and Month", description = "This method generates Trainer's" + " monthly summary by month and year")
+    public ResponseEntity<TrainerSummaryByMonth> getTrainerSummaryByMonthAndYear(@PathVariable String username, @RequestParam("year") int year, @RequestParam("month") int month) {
         return workloadService.getTrainerSummaryByMonthAndYear(username, year, month);
     }
 

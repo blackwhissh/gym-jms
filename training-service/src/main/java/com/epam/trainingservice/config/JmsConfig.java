@@ -23,13 +23,17 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Configuration
 @EnableTransactionManagement
 public class JmsConfig {
+    private static final Logger logger = LoggerFactory.getLogger(JmsConfig.class);
     @Value("${spring.activemq.broker-url}")
     private String brokerUrl;
     @Value("${spring.activemq.user}")
     private String user;
     @Value("${spring.activemq.password}")
     private String password;
-    public static final Logger logger = LoggerFactory.getLogger(JmsConfig.class);
+    @Value("${spring.activemq.clientId}")
+    private String clientId;
+    @Value("${spring.activemq.typeId}")
+    private String typeId;
 
     @Bean
     public SingleConnectionFactory connectionFactory(){
@@ -38,15 +42,15 @@ public class JmsConfig {
                     user,password,brokerUrl
                 )
         );
-        factory.setClientId("training");
+        factory.setClientId(clientId);
         factory.setReconnectOnException(true);
         return factory;
     }
     @Bean
-    public MessageConverter jacksonJmsMessageConverter(){
+    public MessageConverter messageConverter(){
         MappingJackson2MessageConverter converter = new MappingJackson2MessageConverter();
         converter.setTargetType(MessageType.TEXT);
-        converter.setTypeIdPropertyName("_type");
+        converter.setTypeIdPropertyName(typeId);
         return converter;
     }
     @Bean
@@ -70,7 +74,7 @@ public class JmsConfig {
     @Bean
     public JmsTemplate jmsTemplate(){
         JmsTemplate jmsTemplate = new JmsTemplate(connectionFactory());
-        jmsTemplate.setMessageConverter(jacksonJmsMessageConverter());
+
         jmsTemplate.setDeliveryPersistent(true);
         jmsTemplate.setSessionTransacted(true);
         return jmsTemplate;

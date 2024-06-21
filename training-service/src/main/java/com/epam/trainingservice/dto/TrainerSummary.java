@@ -8,6 +8,7 @@ public class TrainerSummary {
     private String lastName;
     private boolean status;
     private List<YearSummary> years;
+
     public TrainerSummary(String username, String firstName, String lastName, boolean status, List<YearSummary> years) {
         this.username = username;
         this.firstName = firstName;
@@ -59,7 +60,7 @@ public class TrainerSummary {
         this.years = years;
     }
 
-    public static class YearSummary{
+    public static class YearSummary {
         private int year;
         private List<MonthSummary> months;
 
@@ -87,6 +88,7 @@ public class TrainerSummary {
             this.months = months;
         }
     }
+
     public static class MonthSummary {
         private int month;
         private int duration;

@@ -6,7 +6,6 @@ import com.epam.trainingservice.entity.Trainer;
 import com.epam.trainingservice.entity.Workload;
 import com.epam.trainingservice.entity.enums.ActionType;
 import com.epam.trainingservice.exception.TrainerNotFoundException;
-import com.epam.trainingservice.exception.WorkloadNotFoundException;
 import com.epam.trainingservice.repository.TrainerRepository;
 import com.epam.trainingservice.repository.WorkloadRepository;
 import org.springframework.http.ResponseEntity;
@@ -14,9 +13,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
-import static com.epam.trainingservice.dto.TrainerSummary.*;
+import static com.epam.trainingservice.dto.TrainerSummary.MonthSummary;
+import static com.epam.trainingservice.dto.TrainerSummary.YearSummary;
 
 @Service
 public class WorkloadService {
@@ -28,7 +27,7 @@ public class WorkloadService {
         this.trainerRepository = trainerRepository;
     }
 
-    public ResponseEntity<TrainerSummary> getTrainerSummary(String username){
+    public ResponseEntity<TrainerSummary> getTrainerSummary(String username) {
         Trainer trainer = trainerRepository.findByUsername(username).orElseThrow(TrainerNotFoundException::new);
         List<Workload> workloads = workloadRepository.findByTrainerOrderByYearAsc(trainer);
 
@@ -40,20 +39,20 @@ public class WorkloadService {
         summary.setStatus(trainer.getActive());
         summary.setYears(new ArrayList<>());
 
-        for(Workload workload : workloads){
-            addWorkloadToSummary(summary,workload);
+        for (Workload workload : workloads) {
+            addWorkloadToSummary(summary, workload);
         }
 
         return ResponseEntity.ok(summary);
-        
+
     }
 
     private void addWorkloadToSummary(TrainerSummary summary, Workload workload) {
-        if(workload.getActionType() == ActionType.ADD){
+        if (workload.getActionType() == ActionType.ADD) {
             YearSummary yearSummary = summary.getYears().stream()
                     .filter(ys -> ys.getYear() == workload.getYear())
                     .findFirst()
-                    .orElseGet(() ->{
+                    .orElseGet(() -> {
                         YearSummary ys = new YearSummary();
                         ys.setYear(workload.getYear());
                         ys.setMonths(new ArrayList<>());
@@ -85,12 +84,12 @@ public class WorkloadService {
 
         int total = 0;
 
-        for (Workload workload : workloads){
-            if(workload.getMonth() == month){
+        for (Workload workload : workloads) {
+            if (workload.getMonth() == month) {
                 total = total + workload.getTrainingDuration();
             }
         }
 
-        return ResponseEntity.ok(new TrainerSummaryByMonth(month,total));
+        return ResponseEntity.ok(new TrainerSummaryByMonth(month, total));
     }
 }

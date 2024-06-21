@@ -22,6 +22,9 @@ spring:
     broker-url: tcp://localhost:61616
     user: admin
     password: admin
+    clientId: gym
+    typeId: _type
+    queue: training.info.queue
     packages:
       trust-all: false
       trusted: com.epam.hibernate
@@ -98,7 +101,7 @@ info:
     version: 3.2.5
     java:
       version: 19.0.2
-  build-timestamp: 2024-06-21 13:14:58
+  build-timestamp: 2024-06-21 18:33:28
 ---
 spring:
   config:
@@ -113,7 +116,7 @@ info:
     version: 3.2.5
     java:
       version: 19.0.2
-  build-timestamp: 2024-06-21 13:14:58
+  build-timestamp: 2024-06-21 18:33:28
 ---
 spring:
   config:
@@ -133,7 +136,7 @@ info:
     version: 3.2.5
     java:
       version: 19.0.2
-  build-timestamp: 2024-06-21 13:14:58
+  build-timestamp: 2024-06-21 18:33:28
 
 ---
 spring:

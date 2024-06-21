@@ -11,5 +11,6 @@ import java.util.List;
 @Repository
 public interface WorkloadRepository extends JpaRepository<Workload, Long> {
     List<Workload> findByTrainerOrderByYearAsc(Trainer trainer);
+
     void deleteByYearAndMonthAndDayAndTrainer(int year, int month, int day, Trainer trainer);
 }

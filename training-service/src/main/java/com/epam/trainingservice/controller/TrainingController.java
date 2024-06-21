@@ -1,7 +1,7 @@
 package com.epam.trainingservice.controller;
 
 import com.epam.trainingservice.config.LogEntryExit;
-import com.epam.trainingservice.dto.TrainingInfoRequest;
+import com.epam.trainingservice.dto.TrainingInfoMessage;
 import com.epam.trainingservice.service.TrainingService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.HttpStatus;
@@ -24,7 +24,7 @@ public class TrainingController {
     @LogEntryExit(showArgs = true, showResult = true)
     @Operation(summary = "Save Report", description = "This method is called from gym-service, " +
             "it saves report in database whenever new training is added or deleted")
-    public ResponseEntity<HttpStatus> saveInfo(@RequestBody TrainingInfoRequest request) {
+    public ResponseEntity<HttpStatus> saveInfo(@RequestBody TrainingInfoMessage request) {
         return trainingService.saveInfo(request);
     }
 }

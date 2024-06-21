@@ -13,13 +13,8 @@ public class JwtUtils {
     @Value("${jwt.secret}")
     private String SECRET;
 
-    public  String validateToken(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(key())
-                .build()
-                .parseClaimsJws(token)
-                .getBody()
-                .getSubject();
+    public String validateToken(String token) {
+        return Jwts.parserBuilder().setSigningKey(key()).build().parseClaimsJws(token).getBody().getSubject();
     }
 
     private Key key() {
