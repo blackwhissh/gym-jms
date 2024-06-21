@@ -95,10 +95,10 @@ info:
   app:
     name: gym-service
     description: dev profile
-    version: 1.0.0
+    version: 3.2.5
     java:
       version: 19.0.2
-  build-timestamp: 2024-06-08 23:05:41
+  build-timestamp: 2024-06-21 13:14:58
 ---
 spring:
   config:
@@ -110,10 +110,10 @@ info:
   app:
     name: gym-service
     description: admin profile
-    version: 1.0.0
+    version: 3.2.5
     java:
       version: 19.0.2
-  build-timestamp: 2024-06-08 23:05:41
+  build-timestamp: 2024-06-21 13:14:58
 ---
 spring:
   config:
@@ -130,10 +130,10 @@ info:
   app:
     name: gym-service
     description: Gym Spring Boot App with Security
-    version: 1.0.0
+    version: 3.2.5
     java:
       version: 19.0.2
-  build-timestamp: 2024-06-08 23:05:41
+  build-timestamp: 2024-06-21 13:14:58
 
 ---
 spring:
