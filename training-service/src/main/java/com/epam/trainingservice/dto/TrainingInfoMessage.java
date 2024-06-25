@@ -1,5 +1,6 @@
 package com.epam.trainingservice.dto;
 
+import com.epam.trainingservice.entity.enums.ActionType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -14,13 +15,13 @@ public class TrainingInfoMessage implements Serializable {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date trainingDate;
     private Integer duration;
-    private String actionType;
+    private ActionType actionType;
     private Boolean isActive;
 
     public TrainingInfoMessage() {
     }
 
-    public TrainingInfoMessage(String username, String firstName, String lastName, Boolean isActive, Date trainingDate, Integer duration, String actionType) {
+    public TrainingInfoMessage(String username, String firstName, String lastName, Boolean isActive, Date trainingDate, Integer duration, ActionType actionType) {
         this.username = username;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -78,11 +79,11 @@ public class TrainingInfoMessage implements Serializable {
         this.duration = duration;
     }
 
-    public String getActionType() {
+    public ActionType getActionType() {
         return actionType;
     }
 
-    public void setActionType(String actionType) {
+    public void setActionType(ActionType actionType) {
         this.actionType = actionType;
     }
 

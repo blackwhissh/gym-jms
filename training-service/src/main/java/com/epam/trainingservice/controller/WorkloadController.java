@@ -24,7 +24,7 @@ public class WorkloadController {
     @LogEntryExit(showArgs = true, showResult = true)
     @Operation(summary = "Get Trainer Summary", description = "This method generates Trainer's monthly summary")
     public ResponseEntity<TrainerSummary> getTrainerSummary(@PathVariable String username) {
-        return workloadService.getTrainerSummary(username);
+        return ResponseEntity.ok(workloadService.getTrainerSummary(username));
     }
 
     @GetMapping("/by-month/{username}")
@@ -32,7 +32,7 @@ public class WorkloadController {
     @LogEntryExit(showArgs = true, showResult = true)
     @Operation(summary = "Get Trainer Summary By Year and Month", description = "This method generates Trainer's" + " monthly summary by month and year")
     public ResponseEntity<TrainerSummaryByMonth> getTrainerSummaryByMonthAndYear(@PathVariable String username, @RequestParam("year") int year, @RequestParam("month") int month) {
-        return workloadService.getTrainerSummaryByMonthAndYear(username, year, month);
+        return ResponseEntity.ok(workloadService.getTrainerSummaryByMonthAndYear(username, year, month));
     }
 
 }
