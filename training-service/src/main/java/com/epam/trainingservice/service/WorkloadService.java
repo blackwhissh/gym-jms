@@ -8,7 +8,6 @@ import com.epam.trainingservice.entity.enums.ActionType;
 import com.epam.trainingservice.exception.TrainerNotFoundException;
 import com.epam.trainingservice.repository.TrainerRepository;
 import com.epam.trainingservice.repository.WorkloadRepository;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

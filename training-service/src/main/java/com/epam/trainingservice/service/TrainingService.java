@@ -8,8 +8,6 @@ import com.epam.trainingservice.exception.WorkloadNotFoundException;
 import com.epam.trainingservice.repository.TrainerRepository;
 import com.epam.trainingservice.repository.WorkloadRepository;
 import jakarta.transaction.Transactional;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -26,6 +24,7 @@ public class TrainingService {
         this.trainerRepository = trainerRepository;
         this.workloadRepository = workloadRepository;
     }
+
     @Transactional
     public boolean updateWorkload(TrainingInfoMessage request) {
         try {
@@ -37,7 +36,7 @@ public class TrainingService {
             Trainer trainer = findAndSaveTrainer(request);
 
             trainerRepository.save(trainer);
-            if(request.getDuration() > 0){
+            if (request.getDuration() > 0) {
                 workloadRepository.save(new Workload(
                         getYear(request.getTrainingDate()),
                         getMonth(request.getTrainingDate()),
@@ -53,7 +52,7 @@ public class TrainingService {
         }
     }
 
-    private Trainer findAndSaveTrainer(TrainingInfoMessage message){
+    private Trainer findAndSaveTrainer(TrainingInfoMessage message) {
         Optional<Trainer> trainer = trainerRepository.findByUsername(message.getUsername());
         if (trainer.isEmpty()) {
             trainer = Optional.of(new Trainer(
