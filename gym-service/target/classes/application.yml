@@ -101,7 +101,7 @@ info:
     version: 3.2.5
     java:
       version: 19.0.2
-  build-timestamp: 2024-06-25 20:40:32
+  build-timestamp: 2024-06-28 23:46:32
 ---
 spring:
   config:
@@ -116,7 +116,7 @@ info:
     version: 3.2.5
     java:
       version: 19.0.2
-  build-timestamp: 2024-06-25 20:40:32
+  build-timestamp: 2024-06-28 23:46:32
 ---
 spring:
   config:
@@ -135,7 +135,7 @@ info:
     version: 3.2.5
     java:
       version: 19.0.2
-  build-timestamp: 2024-06-25 20:40:32
+  build-timestamp: 2024-06-28 23:46:32
 
 ---
 spring:
