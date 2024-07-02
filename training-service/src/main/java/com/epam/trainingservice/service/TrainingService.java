@@ -8,6 +8,8 @@ import com.epam.trainingservice.exception.WorkloadNotFoundException;
 import com.epam.trainingservice.repository.TrainerRepository;
 import com.epam.trainingservice.repository.WorkloadRepository;
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -17,6 +19,7 @@ import static com.epam.trainingservice.utils.DateUtils.*;
 
 @Service
 public class TrainingService {
+    private final static Logger LOGGER = LoggerFactory.getLogger(TrainingService.class);
     private final TrainerRepository trainerRepository;
     private final WorkloadRepository workloadRepository;
 
@@ -48,6 +51,7 @@ public class TrainingService {
             }
             return true;
         } catch (Exception e) {
+            LOGGER.info("Exception occurred during workload update: " + e);
             return false;
         }
     }
