@@ -4,10 +4,12 @@ import com.epam.trainingservice.dto.TrainingInfoMessage;
 import com.epam.trainingservice.entity.Trainer;
 import com.epam.trainingservice.entity.Workload;
 import com.epam.trainingservice.entity.enums.ActionType;
+import com.epam.trainingservice.exception.WorkloadNotFoundException;
 import com.epam.trainingservice.repository.TrainerRepository;
 import com.epam.trainingservice.repository.WorkloadRepository;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -17,6 +19,7 @@ import static com.epam.trainingservice.utils.DateUtils.*;
 
 @Service
 public class TrainingService {
+    private final static Logger LOGGER = LoggerFactory.getLogger(TrainingService.class);
     private final TrainerRepository trainerRepository;
     private final WorkloadRepository workloadRepository;
 
@@ -25,45 +28,64 @@ public class TrainingService {
         this.workloadRepository = workloadRepository;
     }
 
-    public ResponseEntity<HttpStatus> saveInfo(TrainingInfoMessage request) {
+    @Transactional
+    public boolean updateWorkload(TrainingInfoMessage request) {
         try {
             if (Arrays.stream(ActionType.values()).noneMatch(actionType ->
-                    request.getActionType().toUpperCase().equals(actionType.getValue()))) {
+                    request.getActionType().equals(actionType))) {
                 throw new IllegalArgumentException("Wrong Action Type");
             }
 
-            Optional<Trainer> trainer = trainerRepository.findByUsername(request.getUsername());
-            if (trainer.isEmpty()) {
-                trainer = Optional.of(new Trainer(
-                        request.getUsername(),
-                        request.getFirstName(),
-                        request.getLastName(),
-                        request.getActive(),
-                        request.getDuration()));
-                trainerRepository.save(trainer.get());
+            Trainer trainer = findAndSaveTrainer(request);
 
-            } else {
-                if (ActionType.ADD.getValue().equals(request.getActionType())) {
-                    trainer.get().setTotalHours(trainer.get().getTotalHours() + request.getDuration());
-                } else {
-                    trainer.get().setTotalHours(trainer.get().getTotalHours() - request.getDuration());
-                }
-
+            trainerRepository.save(trainer);
+            if (request.getDuration() > 0) {
+                workloadRepository.save(new Workload(
+                        getYear(request.getTrainingDate()),
+                        getMonth(request.getTrainingDate()),
+                        getDay(request.getTrainingDate()),
+                        request.getDuration(),
+                        request.getActionType(),
+                        trainer
+                ));
             }
-
-            workloadRepository.save(new Workload(
-                    getYear(request.getTrainingDate()),
-                    getMonth(request.getTrainingDate()),
-                    getDay(request.getTrainingDate()),
-                    request.getDuration(),
-                    ActionType.valueOf(request.getActionType()),
-                    trainer.get()
-            ));
-
-            return new ResponseEntity<>(HttpStatus.OK);
+            return true;
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            LOGGER.info("Exception occurred during workload update: " + e);
+            return false;
         }
+    }
+
+    private Trainer findAndSaveTrainer(TrainingInfoMessage message) {
+        Optional<Trainer> trainer = trainerRepository.findByUsername(message.getUsername());
+        if (trainer.isEmpty()) {
+            trainer = Optional.of(new Trainer(
+                    message.getUsername(),
+                    message.getFirstName(),
+                    message.getLastName(),
+                    message.getActive(),
+                    message.getDuration()));
+            trainerRepository.save(trainer.get());
+
+        } else {
+            if (ActionType.ADD.equals(message.getActionType())) {
+                trainer.get().setTotalHours(trainer.get().getTotalHours() + message.getDuration());
+            } else {
+                trainer.get().setTotalHours(trainer.get().getTotalHours() - message.getDuration());
+                Optional<Workload> workload = workloadRepository.findFirstByDayAndMonthAndYearAndTrainerAndTrainingDuration(
+                        getDay(message.getTrainingDate()),
+                        getMonth(message.getTrainingDate()),
+                        getYear(message.getTrainingDate()),
+                        trainer.get(),
+                        message.getDuration());
+
+                Workload current = workload.orElseThrow(WorkloadNotFoundException::new);
+                message.setDuration(0);
+                current.setTrainingDuration(message.getDuration());
+                current.setActionType(ActionType.CANCEL);
+                workloadRepository.save(current);
+            }
+        }
+        return trainer.get();
     }
 }

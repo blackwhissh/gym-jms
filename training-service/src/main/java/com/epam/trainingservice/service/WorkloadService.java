@@ -8,7 +8,6 @@ import com.epam.trainingservice.entity.enums.ActionType;
 import com.epam.trainingservice.exception.TrainerNotFoundException;
 import com.epam.trainingservice.repository.TrainerRepository;
 import com.epam.trainingservice.repository.WorkloadRepository;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -27,7 +26,7 @@ public class WorkloadService {
         this.trainerRepository = trainerRepository;
     }
 
-    public ResponseEntity<TrainerSummary> getTrainerSummary(String username) {
+    public TrainerSummary getTrainerSummary(String username) {
         Trainer trainer = trainerRepository.findByUsername(username).orElseThrow(TrainerNotFoundException::new);
         List<Workload> workloads = workloadRepository.findByTrainerOrderByYearAsc(trainer);
 
@@ -43,7 +42,7 @@ public class WorkloadService {
             addWorkloadToSummary(summary, workload);
         }
 
-        return ResponseEntity.ok(summary);
+        return summary;
 
     }
 
@@ -76,7 +75,7 @@ public class WorkloadService {
     }
 
 
-    public ResponseEntity<TrainerSummaryByMonth> getTrainerSummaryByMonthAndYear(String username, int year, int month) {
+    public TrainerSummaryByMonth getTrainerSummaryByMonthAndYear(String username, int year, int month) {
         Trainer trainer = trainerRepository.findByUsername(username).orElseThrow(TrainerNotFoundException::new);
         List<Workload> workloads = workloadRepository.findByTrainerOrderByYearAsc(trainer)
                 .stream().filter(workload -> workload.getYear() == year && workload.getActionType() == ActionType.ADD)
@@ -90,6 +89,6 @@ public class WorkloadService {
             }
         }
 
-        return ResponseEntity.ok(new TrainerSummaryByMonth(month, total));
+        return new TrainerSummaryByMonth(month, total);
     }
 }
